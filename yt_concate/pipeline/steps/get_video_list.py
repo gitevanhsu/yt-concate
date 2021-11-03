@@ -23,6 +23,7 @@ class GetVideoList(Step):
             for i in resp['items']:
                 if i['id']['kind'] == "youtube#video":
                     video_links.append(base_video_url + i['id']['videoId'])
+            break
 
             try:
                 next_page_token = resp['nextPageToken']
