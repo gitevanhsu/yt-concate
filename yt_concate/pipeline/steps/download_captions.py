@@ -1,19 +1,53 @@
 
-from pytube import YouTube
-from .step import Step
-from .step import StepException
+import os
+import time
+
+import requests
+import youtube_dl.utils
+from youtube_dl import YoutubeDL
+
+from yt_concate.pipeline.steps.step import Step
+from yt_concate.pipeline.steps.step import StepException
 
 
 class DownloadCaptions(Step):
-    def proccess(self, data, inputs):
+    def process(self, data, inputs, utils):
+        start = time.time()
+        for url in data:
+            print("downloading caption for", url)
+            if utils.caption_file_exists(url):
+                print('found existing caption file')
+                continue
+            try:
+                ydl = YoutubeDL({'writesubtitles': True, 'allsubtitles': True, 'writeautomaticsub': True})
+                res = ydl.extract_info(url, download=False)
+                if res['requested_subtitles'] and res['requested_subtitles']['en']:
+                    # print('Grabbing vtt file from ' + res['requested_subtitles']['en']['url'])
+                    response = requests.get(res['requested_subtitles']['en']['url'], stream=True)
+                    # print(response.text)
 
-        source = YouTube('https://www.youtube.com/watch?v=J_u0Sw-WIE0&ab_channel=SupercarBlondie')
-        en_caption = source.captions.get_by_language_code('a.en')
-        en_caption_convert_to_srt = (en_caption.generate_srt_captions())
+                    f1 = open(utils.get_caption_filepath(url), "w", encoding='utf-8')
+                    f1.write(response.text)
+                    f1.close()
 
-        print(en_caption_convert_to_srt)
-        # save the caption to a file named Output.txt
-        text_file = open("Output.txt", "w")
-        text_file.write(en_caption_convert_to_srt)
-        text_file.close()
+                    if len(res['subtitles']) > 0:
+                        print('manual captions')
+                    else:
+                        print('automatic_captions')
+                else:
+                    print('Youtube Video does not have any english captions')
+            except (KeyError, AttributeError, youtube_dl.utils.DownloadError):
+                print('Error when downloading caption for', url)
+                continue
+
+        end = time.time()
+        print('took', end - start, 'seconds')
+
+
+
+
+
+
+
+
 
