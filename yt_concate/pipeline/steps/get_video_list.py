@@ -14,8 +14,6 @@ class GetVideoList(Step):
             print('found existing video list file for channel id', channel_id)
             return self.read_to_file(utils.get_video_list_filepath(channel_id))
 
-
-
         base_video_url = 'https://www.youtube.com/watch?v='
         base_search_url = 'https://www.googleapis.com/youtube/v3/search?'
 
