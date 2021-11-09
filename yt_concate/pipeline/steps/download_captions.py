@@ -9,25 +9,27 @@ from pytube import YouTube
 class DownloadCaptions(Step):
     def process(self, data, inputs, utils):
         start = time.time()
-
-        for url in data:
-            if utils.caption_file_exists(url):
+        for yt in data:
+            print('download caption for', yt.id)
+            if utils.caption_file_exists(yt):
                 print('found existing caption file')
                 continue
 
             try:
-                source = YouTube(url)
+                source = YouTube(yt.url)
                 caption = source.captions.get_by_language_code('en')
                 en_caption_convert_to_srt = caption.generate_srt_captions()
-                print(en_caption_convert_to_srt)
 
-                text_file = open(utils.get_caption_filepath(url), "w", encoding='utf-8')
-                text_file.write(en_caption_convert_to_srt)
-                text_file.close()
-            except (KeyError, AttributeError, ):
-                print("an Error for :", url)
+            except :
+                print("Error when download caption for :", yt.url)
                 continue
+
+            text_file = open(utils.get_caption_filepath(yt.url), "w", encoding='utf-8')
+            text_file.write(en_caption_convert_to_srt)
+            text_file.close()
 
         end = time.time()
         print('took', end - start, 'seconds')
+
+        return data
 
