@@ -11,9 +11,11 @@ class DownloadVideos(Step):
         print('video to download = ', len(yt_set))
         for yt in yt_set:
             url = yt.url
+
             if utils.video_file_exists(yt):
                 print('found existing file for', url, ' skipping')
                 continue
+
             print('downloading video :', url)
             YouTube(url).streams.filter(subtype='mp4').first().download(output_path=VIDEOS_DIR, filename=yt.id + '.mp4')
 
