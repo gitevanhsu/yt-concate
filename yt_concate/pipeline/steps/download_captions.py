@@ -1,6 +1,6 @@
 import os
 import time
-from threading import Thread
+from multiprocessing import Process
 
 from yt_concate.pipeline.steps.step import Step
 from yt_concate.pipeline.steps.step import StepException
@@ -10,17 +10,17 @@ from pytube import YouTube
 
 class DownloadCaptions(Step):
     def process(self, data, inputs, utils):
-        threads = []
+        processes = []
         start = time.time()
 
         for i in range(4):
-            threads.append(Thread(target=self.download_cap, args=(data[i::4], utils)))
-        print(threads)
+            processes.append(Process(target=self.download_cap, args=(data[i::4], utils)))
+        print(processes)
 
-        for thread in threads:
-            thread.start()
-        for thread in threads:
-            thread.join()
+        for process in processes:
+            process.start()
+        for process in processes:
+            process.join()
 
         end = time.time()
         print('took', end - start, 'seconds')
