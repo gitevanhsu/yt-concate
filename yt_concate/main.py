@@ -69,13 +69,13 @@ def main():
 
     steps = [
         Preflight(),
-        # GetVideoList(),
-        # InitializeYT(),
-        # DownloadCaptions(),
-        # ReadCaption(),
-        # Search(),
-        # DownloadVideos(),
-        # EditVideo(),
+        GetVideoList(),
+        InitializeYT(),
+        DownloadCaptions(),
+        ReadCaption(),
+        Search(),
+        DownloadVideos(),
+        EditVideo(),
         CleanUP(),
         Postflight(),
     ]
