@@ -23,7 +23,7 @@ class DownloadCaptions(Step):
             process.join()
 
         end = time.time()
-        print('took', end - start, 'seconds')
+        print('took', end - start, 'seconds to download captions')
 
         return data
 
