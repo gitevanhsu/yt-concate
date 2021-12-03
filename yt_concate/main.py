@@ -1,5 +1,6 @@
 import sys
 import getopt
+import logging
 from yt_concate.pipeline.steps.preflight import Preflight
 from yt_concate.pipeline.steps.get_video_list import GetVideoList
 from yt_concate.pipeline.steps.initialize_yt import InitializeYT
@@ -19,23 +20,33 @@ CHANNEL_ID = 'UCKSVUHI9rbbkXhvAXK-2uxA'
 
 
 def main():
+    log_level = logging.WARNING
     inputs = {
         'channel_id': CHANNEL_ID,
         'search_word': 'incredible',
         'limit': 20,
         'cleanup': False,
         'fast': True,
+        'log_level': log_level,
     }
     print(sys.argv[1:])
 
     def print_usage():
         print('main.py OPTIONS')
         print('OPTIONS')
+        print('--channel <channel_id>'
+              '--search <search word>'
+              '--limit <limit number>'
+              'fast <Ture/False>'
+              'cleanup <Ture/False>'
+              'log <DEBUG/INFO/WARNING/ERROR/CRITICAL>')
+
         print('{:>6} {:<12}{}'.format('-c', '--channel', 'channel id on Youtube'))
         print('{:>6} {:<12}{}'.format('-s', '--search', 'search word in videos'))
         print('{:>6} {:<12}{}'.format('-l', '--limit', 'limit videos of edit'))
         print('{:>6} {:<12}{}'.format('', '--fast', 'ignore step when file existing'))
         print('{:>6} {:<12}{}'.format('', '--cleanup', 'remove all downloads'))
+        print('{:>6} {:<12}{}'.format('', '--log', 'select log level to print on cmd'))
 
     def input_argument():
         short_otp = 'hc:s:l:f:'
@@ -64,6 +75,8 @@ def main():
                     inputs['fast'] = True
             elif opt == 'cleanup':
                 inputs['cleanup'] = True
+            elif opt == 'log':
+                inputs['log_level'] = eval(f'logging.{arg}')
 
     input_argument()
 
