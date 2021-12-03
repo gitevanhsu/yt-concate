@@ -1,6 +1,5 @@
-from pprint import pprint
-
 from .step import Step
+
 
 class ReadCaption(Step):
     def process(self, data, inputs, utils):

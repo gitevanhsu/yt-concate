@@ -1,4 +1,5 @@
 import time
+import logging
 from multiprocessing import Process
 from pytube import YouTube
 
@@ -9,13 +10,14 @@ from yt_concate.settings import VIDEOS_DIR
 
 class DownloadVideos(Step):
     def process(self, data, inputs, utils):
+        logger = logging.getLogger('yt_concate_log')
 
         processes = []
         start = time.time()
 
         for i in range(4):
             processes.append(Process(target=self.download_videos, args=(data[i::4], utils)))
-        print(processes)
+        logger.info(f'{processes}')
 
         for process in processes:
             process.start()
@@ -23,19 +25,22 @@ class DownloadVideos(Step):
             process.join()
 
         end = time.time()
-        print('took', end - start, 'seconds to download videos')
+        logger.info(f'took {end-start} seconds to download videos')
+
+        return data
 
     def download_videos(self, data, utils):
+        logger = logging.getLogger('yt_concate_log')
         yt_set = set([found.yt for found in data])
-        print('video to download = ', len(yt_set))
+        logger.info(f'video to download = {len(yt_set)}')
         for yt in yt_set:
             url = yt.url
 
             if utils.video_file_exists(yt):
-                print('found existing file for', url, ' skipping')
+                logger.info(f'found existing file for {url} skipping')
                 continue
 
-            print('downloading video :', url)
+            logger.info(f'downloading video : {url}')
             YouTube(url).streams.filter(subtype='mp4').first().download(output_path=VIDEOS_DIR, filename=yt.id + '.mp4')
 
-        return data
+

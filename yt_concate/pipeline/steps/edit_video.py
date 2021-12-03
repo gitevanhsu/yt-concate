@@ -1,3 +1,4 @@
+import logging
 from moviepy.editor import VideoFileClip
 from moviepy.editor import concatenate_videoclips
 
@@ -6,9 +7,11 @@ from .step import Step
 
 class EditVideo(Step):
     def process(self, data, inputs, utils):
+        logger = logging.getLogger('yt_concate_log')
         clips = []
         for found in data:
-            print(found.time)
+            logger.info(f'{found.yt}')
+            logger.info(f'{found.time}')
             start, end = self.parse_caption_time(found.time)
             video = VideoFileClip(found.yt.video_filepath).subclip(start, end)
             clips.append(video)
@@ -28,15 +31,3 @@ class EditVideo(Step):
         s, ms = s.split(',')
 
         return int(h), int(m), int(s) + int(ms) / 1000
-
-
-
-
-
-# # Make the text. Many more options are available.
-# txt_clip = ( TextClip("My Holidays 2013",fontsize=70,color='white')
-#              .with_position('center')
-#              .with_duration(10) )
-#
-# result = CompositeVideoClip([video, txt_clip]) # Overlay text on video
-# result.write_videofile("myHolidays_edited.webm",fps=25) # Many options...

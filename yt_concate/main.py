@@ -14,6 +14,7 @@ from yt_concate.pipeline.steps.postflight import Postflight
 from yt_concate.pipeline.steps.step import StepException
 from yt_concate.pipeline.pipeline import Pipeline
 from yt_concate.utils import Utils
+from yt_concate.log import log
 
 
 CHANNEL_ID = 'UCKSVUHI9rbbkXhvAXK-2uxA'
@@ -92,7 +93,7 @@ def main():
         CleanUP(),
         Postflight(),
     ]
-
+    log(inputs['log_level'])
     utils = Utils()
     p = Pipeline(steps)
     p.run(inputs, utils)
